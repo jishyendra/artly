@@ -3,13 +3,21 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignIn, signInSchema } from "@/lib/types/userSchema";
+import { signIn } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
 export default function SingIn(){
     const {register, handleSubmit, formState:{errors}} = useForm({
         resolver: zodResolver(signInSchema),
     });
-    const onSubmit = (data:SignIn) => {
-        console.log(data);
+    const onSubmit = async (data:SignIn) => {
+        const {data:res, error}= await signIn.email({
+            email:data.email,
+            password:data.password,
+        })
+        if(!error){
+            redirect("/");
+        }
     }
 
     return (
