@@ -1,11 +1,6 @@
-import { createClient } from "better-auth";
+import { createAuthClient } from "better-auth/react";
+const authClient = createAuthClient({
+   baseURL:process.env.BASE_URL,
 
-const authClient = createClient({});
-
-
-const { data, error } = await authClient.signUp.email({
-  email: "test@example.com",
-  password: "password1234",
-  name: "test",
-  image: "https://example.com/image.png",
 });
+export const {signIn,signUp,signOut, useSession} = authClient;
