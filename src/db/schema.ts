@@ -3,18 +3,24 @@ import {
   text,
   integer,
   timestamp,
+  varchar,
   boolean,
+  pgEnum,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
+  active: boolean("is_active").default(true).notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
+
+export type User = typeof user.$inferSelect;
 
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
@@ -54,4 +60,49 @@ export const verification = pgTable("verification", {
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at"),
   updatedAt: timestamp("updated_at"),
+});
+
+export const post = pgTable("posts", {
+  id: text("post_id").primaryKey(),
+  title: varchar("title"),
+  content: text("body").notNull(),
+  authorId: text("author_id").references(() => user.id, {
+    onDelete: "cascade",
+  }),
+  likedUsers: text("liked_users")
+    .array()
+    .default(sql`'{}'::text[]`),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  modifiedAt: timestamp("modified_at").notNull().defaultNow(),
+});
+
+export const comment = pgTable("comments", {
+  id: text("comment_id").primaryKey(),
+  body: text("body").notNull(),
+  postId: text("post_id")
+    .notNull()
+    .references(() => post.id),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+  modifiedAt: timestamp("modified_at"),
+});
+
+export const targetType = pgEnum("target_type", ["post", "comment"]);
+
+export const media = pgTable("media", {
+  id: text("id").primaryKey(),
+  targetType: targetType("target_type").notNull(),
+  postId: text("post_id").references(() => post.id, {
+    onDelete: "cascade",
+  }),
+  commentId: text("comment_id").references(() => comment.id, {
+    onDelete: "cascade",
+  }),
+  media: text("media")
+    .array()
+    .default(sql`'{}::text[]`)
+    .notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
 });
