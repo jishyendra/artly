@@ -1,11 +1,10 @@
 import {
   pgTable,
   text,
-  integer,
   timestamp,
-  varchar,
   boolean,
   pgEnum,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -16,8 +15,8 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at"),
 });
 
 export type User = typeof user.$inferSelect;
@@ -49,8 +48,8 @@ export const account = pgTable("account", {
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").notNull(),
 });
 
 export const verification = pgTable("verification", {
@@ -62,26 +61,31 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at"),
 });
 
-export const post = pgTable("posts", {
-  id: text("post_id").primaryKey(),
-  title: varchar("title"),
-  content: text("body").notNull(),
+export const postsTable = pgTable("posts", {
+  postId: uuid("id").primaryKey().defaultRandom(),
+  body: text("body").notNull(),
   authorId: text("author_id").references(() => user.id, {
     onDelete: "cascade",
   }),
-  likedUsers: text("liked_users")
+  urlList: text("urls_list")
     .array()
-    .default(sql`'{}'::text[]`),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  modifiedAt: timestamp("modified_at").notNull().defaultNow(),
+    .default(sql`ARRAY[]::text[]`),
+  likedby: text("liked_by")
+    .array()
+    .notNull()
+    .default(sql` ARRAY[]::text[]`),
+  createdAt: timestamp("created_at").defaultNow(),
+  modifiedAt: timestamp("modified_at"),
 });
 
-export const comment = pgTable("comments", {
-  id: text("comment_id").primaryKey(),
+export type Post = typeof postsTable.$inferSelect;
+
+export const commentsTable = pgTable("comments", {
+  commentId: uuid("comment_id").primaryKey().defaultRandom(),
   body: text("body").notNull(),
-  postId: text("post_id")
+  postId: uuid("post_id")
     .notNull()
-    .references(() => post.id),
+    .references(() => postsTable.postId, { onDelete: "cascade" }),
   authorId: text("author_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -90,19 +94,3 @@ export const comment = pgTable("comments", {
 });
 
 export const targetType = pgEnum("target_type", ["post", "comment"]);
-
-export const media = pgTable("media", {
-  id: text("id").primaryKey(),
-  targetType: targetType("target_type").notNull(),
-  postId: text("post_id").references(() => post.id, {
-    onDelete: "cascade",
-  }),
-  commentId: text("comment_id").references(() => comment.id, {
-    onDelete: "cascade",
-  }),
-  media: text("media")
-    .array()
-    .default(sql`'{}::text[]`)
-    .notNull(),
-  createdAt: timestamp("createdAt").defaultNow(),
-});
