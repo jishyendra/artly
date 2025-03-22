@@ -3,15 +3,24 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { createPost } from "@/lib/actions";
-import { postSchema, type PostFormValues } from "@/lib/validation/post";
-import { FormEvent, FormEventHandler, useState } from "react";
+import {
+  type PostFormValues,
+  type UrlValues,
+  type SourceValues,
+} from "@/lib/validation/post";
+import { FormEvent, useState } from "react";
 import { useFormStatus } from "react-dom";
 import UrlList from "../UrlList";
+import { Select, SelectContent, SelectItem } from "../ui/select";
+import { SelectTrigger, SelectValue } from "@radix-ui/react-select";
 
 export default function CreatePostForm() {
   const [body, setBody] = useState("");
-  const [urls, setUrls] = useState<string[]>([]);
+  const [urls, setUrls] = useState<UrlValues[]>([]);
   const [newUrl, setNewUrl] = useState("");
+  const [selectedSource, setSelectedSource] = useState<SourceValues>("youtube");
+  
+  const [published, setPublished] = useState(false);
 
   const { pending, data, action } = useFormStatus();
 
@@ -21,13 +30,16 @@ export default function CreatePostForm() {
 
   async function onSubmit(e: FormEvent, data: PostFormValues) {
     e.preventDefault();
-    console.log(pending);
-    const filteredUrls = urls?.filter((item) => item.trim() !== "") || [];
+    const filteredUrls = urls?.filter((item) => item.url.trim() !== "") || [];
+
     let formData = new FormData();
     formData.append("body", data.body);
     formData.append("urls", JSON.stringify(filteredUrls));
     const res = await createPost(formData);
-    console.log(pending);
+    if (res?.success) {
+      setPublished(true);
+      setUrls([]);
+    }
   }
 
   return (
@@ -45,6 +57,25 @@ export default function CreatePostForm() {
         ></Textarea>
         <div>
           <div className="flex w-full justify-start gap-4">
+            <Select
+              onValueChange={(val: SourceValues) => setSelectedSource(val)}
+              required
+              defaultValue="youtube"
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a source" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="x">X</SelectItem>
+                <SelectItem value="tiktok">Tiktok</SelectItem>
+                <SelectItem value="youtube">Youtube</SelectItem>
+                <SelectItem value="twitch">Twitch</SelectItem>
+                <SelectItem value="instagram">Instagram</SelectItem>
+                <SelectItem value="facebook">Facebook</SelectItem>
+                <SelectItem value="pinterest">Pinterst</SelectItem>
+              </SelectContent>
+            </Select>
+
             <Input
               type="url"
               placeholder="Add a url."
@@ -56,7 +87,10 @@ export default function CreatePostForm() {
               className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-75"
               type="button"
               onClick={() => {
-                setUrls([...urls, newUrl || ""]);
+                setUrls([
+                  ...urls,
+                  { url: newUrl || "", source: selectedSource },
+                ]);
                 setNewUrl("");
               }}
             >

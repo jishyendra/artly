@@ -1,32 +1,21 @@
 "use client";
-import {
-  XEmbed,
-  YouTubeEmbed,
-  InstagramEmbed,
-  PinterestEmbed,
-  FacebookEmbedProps,
-  LinkedInEmbed,
-} from "react-social-media-embed";
+import { type UrlValues } from "@/lib/validation/post";
 
 type UrlListProps = {
-  urls: string[];
+  urls: UrlValues[];
   removeUrl: (index: number) => void;
 };
 
 export default function UrlList({ urls, removeUrl }: Readonly<UrlListProps>) {
   return (
     <div className="">
-      {urls.map((url, index) => (
+      {urls.map((item, index) => (
         <div key={index} className="flex items-center gap-2">
-          <div className="flex-grow p-2">
-            <XEmbed url={url} />
-            {/* <YouTubeEmbed url={url} />
-            <InstagramEmbed url={url} />
-            <PinterestEmbed url={url} />
-            <LinkedInEmbed url={url} /> */}
+          <div className="flex flex-grow gap-2 p-2">
+            <span>{item.source}</span>
+            <span>{item.url}</span>
           </div>
           <button
-          className="flex-shrink"
             type="button"
             onClick={() => {
               removeUrl(index);

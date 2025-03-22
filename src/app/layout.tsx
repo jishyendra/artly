@@ -24,9 +24,9 @@ export default function RootLayout({
           src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v22.0"
         ></script>
       </head>
-      <body className="grid gap-1 bg-slate-100">
+      <body className="grid w-full gap-4 bg-slate-100">
         <Navigation />
-        <div className="mx-auto w-full max-w-4xl px-2">{children}</div>
+        <div className="mx-auto w-full max-w-screen-md">{children}</div>
       </body>
     </html>
   );

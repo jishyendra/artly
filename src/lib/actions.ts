@@ -1,4 +1,5 @@
 "use server";
+import { type UrlValues } from "./validation/post";
 import { db } from "@/db";
 import { postsTable } from "@/db/schema";
 import { auth } from "./auth";
@@ -12,21 +13,23 @@ export async function createPost(formData: FormData) {
   });
   const body = formData.get("body");
   const urls = formData.get("urls");
-  const urlList = JSON.parse(urls as string);
+  const urlList = JSON.parse(urls as string).map((item: UrlValues) =>
+    JSON.stringify(item),
+  );
 
   const postId = await db
     .insert(postsTable)
     .values({
       body: body as string,
       authorId: user.id,
-      urlList,
+      urlList: urlList,
     })
     .returning({ postId: postsTable.postId });
-
+  console.log("returned postId: ", postId);
   return {
     success: true,
     message: "Post created successfully",
-    data: { body, urls, postId },
+    data: { body, urls },
   };
 }
 

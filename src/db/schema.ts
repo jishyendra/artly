@@ -70,6 +70,8 @@ export const postsTable = pgTable("posts", {
   urlList: text("urls_list")
     .array()
     .default(sql`ARRAY[]::text[]`),
+  //but this contains a strigified object with keys `url`,`source`
+
   likedby: text("liked_by")
     .array()
     .notNull()
@@ -78,7 +80,7 @@ export const postsTable = pgTable("posts", {
   modifiedAt: timestamp("modified_at"),
 });
 
-export type Post = typeof postsTable.$inferSelect;
+export type PostValues = typeof postsTable.$inferSelect;
 
 export const commentsTable = pgTable("comments", {
   commentId: uuid("comment_id").primaryKey().defaultRandom(),
