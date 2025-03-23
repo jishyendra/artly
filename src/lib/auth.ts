@@ -15,6 +15,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  trustedOrigins: ["https://rndyw-106-217-150-18.a.free.pinggy.link"],
 });
 
 export const getUserSession = async () => {

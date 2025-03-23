@@ -4,7 +4,7 @@ import Avatar from "./Avatar";
 export default function Navigation() {
   return (
     <>
-      <nav className="flex items-center justify-between gap-4 p-4 shadow">
+      <nav className="flex items-center justify-between gap-4 p-4 shadow w-full">
         <Link href="/">Home</Link>
         <Link href="/user">
           Account

@@ -9,6 +9,15 @@ import {
   FacebookEmbed,
   TikTokEmbed,
 } from "react-social-media-embed";
+import { Card, CardContent } from "@/components/ui/card";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 import { UrlValues, type SourceValues } from "@/lib/validation/post";
 import Avatar from "../Avatar";
@@ -35,52 +44,62 @@ export default function Post({
   const itemCount = urls.length;
 
   return (
-    <div className="grid gap-2 rounded-md border p-2">
-      <div className="flex flex-nowrap justify-between gap-4">
+    <div key={postId} className="p-1">
+      <div className="flex items-center justify-between gap-4">
         <Link href="#">
-          <div className="flex w-full items-center gap-2 text-sm">
+          <div className="space-between flex flex-grow items-center text-sm">
             <Avatar />
-            <div>{`@${author}`}</div>
+            <div>{`@${author.substring(0, 8)}`}</div>
           </div>
         </Link>
         <div>
           <Button>Follow</Button>
         </div>
       </div>
-      <div key={postId} className="ml-2">
+      <div className="ml-2">
         <hr></hr>
         <div>{body}</div>
-        <div
+        {/* <div
           className={cn(
             "mx-auto w-full items-center justify-center overflow-hidden rounded-xl border *:w-full *:object-cover",
             // "sm:",
             itemCount === 1 &&
-              "relative inset-0 pb-[56.25%] *:absolute *:inset-0 *:h-full",
+              "inset-0 pb-[56.25%] *:absolute *:inset-0 *:h-full sm:relative",
             itemCount === 2 && "grid h-80 grid-cols-2 gap-px *:h-full",
             itemCount === 3 &&
               "grid h-80 grid-cols-2 gap-px *:h-40 *:first:row-span-2 *:first:h-full",
             itemCount === 4 &&
               "grid h-80 grid-cols-2 grid-rows-2 gap-px *:h-40",
           )}
-        >
-          {urls.map((url, key) => {
-            return (
-              <>
-                <EmbedPost
-                  key={key}
-                  width={"100%"}
-                  height={"100%"}
-                  source={url.source}
-                  url={url.url}
-                />
-              </>
-            );
-          })}
+        > */}
+        <div>
+          <Carousel className="Carousel relative">
+            <CarouselContent className="Carousel-Content">
+              {urls.map((url, key) => {
+                return (
+                  <CarouselItem className="Carousel-Item" key={key}>
+                    <Card className="Card">
+                      <CardContent className="Card-Item p-0! h-full! flex aspect-square w-full items-center justify-center">
+                        <EmbedPost
+                          source={url.source}
+                          className="EmbedPost w-full"
+                          url={url.url}
+                        />
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-0 top-1/2" />
+            <CarouselNext className="absolute right-0 top-1/2" />
+          </Carousel>
         </div>
-        <hr></hr>
-        <div className="text-sm">{`${new Date(createdAt).toLocaleString()}`}</div>
-        <PostControls />
       </div>
+      <hr></hr>
+      <div className="text-sm">{`${new Date(createdAt).toLocaleString()}`}</div>
+      <PostControls />
+      {/* </div> */}
     </div>
   );
 }
@@ -88,7 +107,7 @@ export default function Post({
 export function EmbedPost({
   source,
   url,
-  // className,
+  className,
   width,
   height,
 }: {
@@ -101,19 +120,14 @@ export function EmbedPost({
   switch (source) {
     case "x":
       return (
-        <XEmbed
-          height={height}
-          width={width}
-          // className={className}
-          url={url}
-        />
+        <XEmbed height={height} width={width} className={className} url={url} />
       );
     case "youtube":
       return (
         <YouTubeEmbed
           height={height}
           width={width}
-          // className={className}
+          className={className}
           url={url}
         />
       );
@@ -125,7 +139,7 @@ export function EmbedPost({
           url={url}
           height={height}
           width={width}
-          // className={className}
+          className={className}
         />
       );
     case "facebook":
@@ -134,7 +148,7 @@ export function EmbedPost({
           url={url}
           height={height}
           width={width}
-          // className={className}
+          className={className}
         />
       );
     case "tiktok":
@@ -143,7 +157,7 @@ export function EmbedPost({
           height={height}
           width={width}
           url={url}
-          // className={className}
+          className={className}
         />
       );
     default:

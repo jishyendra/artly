@@ -18,7 +18,7 @@ export default function Timeline() {
   }
   const res = data;
   return (
-    <>
+    <div>
       {res.posts?.map((post: PostValues, key: any) => (
         <Post
           key={key}
@@ -32,6 +32,6 @@ export default function Timeline() {
           )}
         />
       ))}
-    </>
+    </div>
   );
 }

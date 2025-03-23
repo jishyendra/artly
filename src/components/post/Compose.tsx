@@ -19,7 +19,7 @@ export default function CreatePostForm() {
   const [urls, setUrls] = useState<UrlValues[]>([]);
   const [newUrl, setNewUrl] = useState("");
   const [selectedSource, setSelectedSource] = useState<SourceValues>("youtube");
-  
+
   const [published, setPublished] = useState(false);
 
   const { pending, data, action } = useFormStatus();
@@ -43,7 +43,7 @@ export default function CreatePostForm() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full">
       <form
         onSubmit={(e) => onSubmit(e, { body, urls })}
         className="w-ful flex flex-col gap-4"
