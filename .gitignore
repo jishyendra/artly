@@ -22,6 +22,8 @@ next-env.d.ts
 # production
 /build
 
+##
+/src/db/seedData.ts
 # misc
 .DS_Store
 *.pem

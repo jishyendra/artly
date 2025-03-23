@@ -8,9 +8,13 @@ import { headers } from "next/headers";
 export async function createPost(formData: FormData) {
   //TODO: Validate form data
   //TODO: validate incoming data
-  const { user } = await auth.api.getSession({
+  const data = await auth.api.getSession({
     headers: await headers(),
   });
+
+  if (!data) return;
+  const { user } = data;
+
   const body = formData.get("body");
   const urls = formData.get("urls");
   const urlList = JSON.parse(urls as string).map((item: UrlValues) =>

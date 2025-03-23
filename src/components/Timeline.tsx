@@ -32,6 +32,6 @@ export default function Timeline() {
           )}
         />
       ))}
-    </div>
+    </>
   );
 }

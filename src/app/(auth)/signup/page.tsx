@@ -1,7 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema, type SignupFormValues } from "@/lib/validation/auth";
+import { signUpSchema, type SignUpFormValues } from "@/lib/validation/auth";
 import { signUp } from "@/lib/auth-client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -13,12 +13,12 @@ export default function SignUp() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<TSignUpSchema>({
+  } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = async (data: TSignUpSchema) => {
-    const { data: res, error } = await signUp.email({
+  const onSubmit = async (data: SignUpFormValues) => {
+    const { error } = await signUp.email({
       name: data.username,
       email: data.email,
       password: data.password,

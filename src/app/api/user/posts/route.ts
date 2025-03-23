@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { postsTable } from "@/db/schema";
-import { getUserSession, Session } from "@/lib/auth";
+import { getUserSession } from "@/lib/auth";
 
-export async function GET(req: Request, res: Response) {
+export async function GET() {
   const { user } = await getUserSession();
   const posts = await db
     .select()

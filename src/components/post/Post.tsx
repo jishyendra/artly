@@ -29,7 +29,7 @@ type PostProps = {
   author: string;
   createdAt: Date;
   likedBy?: number;
-  urls: UrlValues[];
+  urls?: UrlValues[];
   postId: string;
 };
 
@@ -41,7 +41,7 @@ export default function Post({
   urls,
   postId,
 }: PostProps) {
-  const itemCount = urls.length;
+  const itemCount = urls?.length;
 
   return (
     <div key={postId} className="p-1">
@@ -75,7 +75,7 @@ export default function Post({
         <div>
           <Carousel className="Carousel relative">
             <CarouselContent className="Carousel-Content">
-              {urls.map((url, key) => {
+              {urls?.map((url, key) => {
                 return (
                   <CarouselItem className="Carousel-Item" key={key}>
                     <Card className="Card">

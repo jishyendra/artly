@@ -69,7 +69,7 @@ export default function SingIn() {
         </Button>
       </form>
       <p className="my-4">
-        Don't have an account?{" "}
+        Don't have an account?
         <Link className="font-blue border-b" href="/signup">
           Sign Up
         </Link>
