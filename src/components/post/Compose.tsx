@@ -62,7 +62,7 @@ export default function CreatePostForm() {
               required
               defaultValue="youtube"
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-fullrounded-md border-input bg-transparent px-2 py-1 text-base shadow-sm">
                 <SelectValue placeholder="Select a source" />
               </SelectTrigger>
               <SelectContent>

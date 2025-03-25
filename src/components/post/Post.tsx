@@ -72,17 +72,20 @@ export default function Post({
               "grid h-80 grid-cols-2 grid-rows-2 gap-px *:h-40",
           )}
         > */}
-        <div>
-          <Carousel className="Carousel relative">
+        <div className="mt-2 overflow-hidden rounded-md">
+          <Carousel className="Carousel relative w-full">
             <CarouselContent className="Carousel-Content">
               {urls?.map((url, key) => {
                 return (
-                  <CarouselItem className="Carousel-Item" key={key}>
-                    <Card className="Card">
-                      <CardContent className="Card-Item p-0! h-full! flex aspect-square w-full items-center justify-center">
+                  <CarouselItem
+                    className="Carousel-Item mx-auto w-full max-w-md p-px"
+                    key={key}
+                  >
+                    <Card className="Card align-center flex w-full items-center justify-center">
+                      <CardContent className="Card-Item mx-auto flex w-full items-center justify-center bg-transparent p-0">
                         <EmbedPost
                           source={url.source}
-                          className="EmbedPost w-full"
+                          className="EmbedPost w-full bg-transparent"
                           url={url.url}
                         />
                       </CardContent>
