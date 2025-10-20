@@ -7,12 +7,14 @@ import {
   type PostFormValues,
   type UrlValues,
   type SourceValues,
+  postSchema,
 } from "@/lib/validation/post";
 import { FormEvent, useState } from "react";
 import { useFormStatus } from "react-dom";
 import UrlList from "../UrlList";
 import { Select, SelectContent, SelectItem } from "../ui/select";
 import { SelectTrigger, SelectValue } from "@radix-ui/react-select";
+import { isReadable } from "stream";
 
 export default function CreatePostForm() {
   const [body, setBody] = useState("");
@@ -29,12 +31,24 @@ export default function CreatePostForm() {
   }
 
   async function onSubmit(e: FormEvent, data: PostFormValues) {
-    e.preventDefault();
-    const filteredUrls = urls?.filter((item) => item.url.trim() !== "") || [];
-
+    // e.preventDefault();
+    const filteredUrls = urls?.filter((item) => item.url.trim() !== "");
     let formData = new FormData();
     formData.append("body", data.body);
-    formData.append("urls", JSON.stringify(filteredUrls));
+
+    if (filteredUrls) {
+      filteredUrls.forEach((url, index) => {
+        formData.append(`urls[${index}]`, JSON.stringify(url));
+      });
+    }
+
+    try {
+      postSchema.parse(formData);
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+
     const res = await createPost(formData);
     if (res?.success) {
       setPublished(true);

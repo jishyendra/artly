@@ -7,9 +7,9 @@ export default function Avatar({ className }: { className?: string }) {
     <Image
       src="/images/image.png"
       alt="default avatar"
-      className={cn("aspect-square max-h-14 rounded", className)}
-      width={40}
+      className={cn("aspect-square rounded", className)}
       height={40}
+      width={40}
     />
   );
 }

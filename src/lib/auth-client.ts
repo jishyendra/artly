@@ -1,6 +1,19 @@
 import { createAuthClient } from "better-auth/react";
+import { inferAdditionalFields } from "better-auth/client/plugins";
+import { auth } from "./auth";
+
 const authClient = createAuthClient({
   baseURL: process.env.BASE_URL,
+  plugins: [
+    inferAdditionalFields({
+      user: {
+        username: {
+          type: "string",
+          required: true,
+        },
+      },
+    }),
+  ],
 });
 export const { signIn, signUp, signOut, useSession } = authClient;
 export type TSession = ReturnType<typeof useSession>;

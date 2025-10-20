@@ -2,13 +2,14 @@
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signInSchema, type SignInFormValues } from "@/lib/validation/auth";
+import { signInSchema, type SignInValues } from "@/lib/validation/auth";
 import { signIn } from "@/lib/auth-client";
 import FormError from "@/components/ui/FormError";
 import { setUser } from "@/app/store/user";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 
 export default function SingIn() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function SingIn() {
     },
     resolver: zodResolver(signInSchema),
   });
-  const onSubmit = async (data: SignInFormValues) => {
+  const onSubmit = async (data: SignInValues) => {
     const { data: res, error } = await signIn.email({
       email: data.email,
       password: data.password,
@@ -40,16 +41,15 @@ export default function SingIn() {
       });
       router.push("/user");
     }
-
     if (error) {
-      setError("unauthorized", { type: error.code, message: error.message });
+      setError("root", { type: error.code, message: error.message });
     }
   };
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <form
-        className="auth-form flex flex-col gap-4"
+        className="auth-form flex w-full max-w-sm flex-col gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         <Input placeholder="Email" {...register("email")} />
@@ -67,6 +67,7 @@ export default function SingIn() {
         >
           {isSubmitting ? "Signing in.." : "Sign In"}
         </Button>
+        {errors.root && <FormError message={errors.root.message} />}
       </form>
       <p className="my-4">
         Don't have an account?

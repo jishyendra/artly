@@ -6,17 +6,18 @@ import {
   pgEnum,
   uuid,
 } from "drizzle-orm/pg-core";
+
 import { sql } from "drizzle-orm";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  active: boolean("is_active").default(true).notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+  username: text("username").notNull(),
 });
 
 export type User = typeof user.$inferSelect;
@@ -48,8 +49,8 @@ export const account = pgTable("account", {
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
   scope: text("scope"),
   password: text("password"),
-  updatedAt: timestamp("updated_at").notNull(),
   createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
 });
 
 export const verification = pgTable("verification", {
@@ -61,38 +62,60 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at"),
 });
 
-export const postsTable = pgTable("posts", {
+export const posts = pgTable("posts", {
   postId: uuid("id").primaryKey().defaultRandom(),
   body: text("body").notNull(),
   authorId: text("author_id").references(() => user.id, {
     onDelete: "cascade",
   }),
+  isCollactable: boolean("is_collactable").default(false),
   urlList: text("urls_list")
     .array()
     .default(sql`ARRAY[]::text[]`),
-  //but this contains a strigified object with keys `url`,`source`
-
-  likedby: text("liked_by")
-    .array()
-    .notNull()
-    .default(sql` ARRAY[]::text[]`),
   createdAt: timestamp("created_at").defaultNow(),
   modifiedAt: timestamp("modified_at"),
 });
 
-export type PostValues = typeof postsTable.$inferSelect;
+export type PostValues = typeof posts.$inferSelect;
 
-export const commentsTable = pgTable("comments", {
-  commentId: uuid("comment_id").primaryKey().defaultRandom(),
-  body: text("body").notNull(),
-  postId: uuid("post_id")
-    .notNull()
-    .references(() => postsTable.postId, { onDelete: "cascade" }),
-  authorId: text("author_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow(),
-  modifiedAt: timestamp("modified_at"),
+export const likes = pgTable("likes", {
+  likeId: uuid("like_id").primaryKey().defaultRandom(),
+  postId: uuid("post_id").references(() => posts.postId, {
+    onDelete: "cascade",
+  }),
+  userId: text("user_id").references(() => user.id, {
+    onDelete: "cascade",
+  }),
 });
+export type LikeValues = typeof likes.$inferSelect;
 
 export const targetType = pgEnum("target_type", ["post", "comment"]);
+
+export const collections = pgTable("collections", {
+  collectionId: uuid("collection_id").primaryKey().defaultRandom(),
+  postId: uuid("post_id")
+    .notNull()
+    .references(() => posts.postId, { onDelete: "cascade" }),
+  collectedBy: text("collected_by")
+    .notNull()
+    .references(() => user.id, {
+      onDelete: "cascade",
+    }),
+});
+
+export type CollectionValues = typeof collections.$inferSelect;
+
+export const gifts = pgTable("gifts", {
+  giftId: uuid("gift_id").primaryKey().defaultRandom(),
+  transactionId: text("transaction_id").notNull(),
+  postId: uuid("post_id")
+    .references(() => posts.postId, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  senderId: text("sender_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export type GiftValues = typeof gifts.$inferSelect;

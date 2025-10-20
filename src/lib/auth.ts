@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, string } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
@@ -16,6 +16,16 @@ export const auth = betterAuth({
     enabled: true,
   },
   trustedOrigins: ["https://rndyw-106-217-150-18.a.free.pinggy.link"],
+  user: {
+    additionalFields: {
+      username: {
+        type: "string",
+        required: true,
+        defaultValue: null,
+        input: true,
+      },
+    },
+  },
 });
 
 export const getUserSession = async () => {
